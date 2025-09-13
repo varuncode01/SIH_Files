@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">  
+<head>  
+<meta charset="utf-8" />  
+<meta name="viewport" content="width=device-width,initial-scale=1" />  
+<title>AgriSense — AI Smart Crop Advisory & Direct Market</title>  
+
+<!-- External libs -->  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">  
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />  
+
+<style>  
+:root{--bg:#f3f7f2;--panel:#ffffff;--muted:#666f6a;--text:#072018;--accent-1:#2f9d69;--accent-2:#86c166;--accent-3:#f59e0b;--soil:#8b5e3c;--glass:rgba(255,255,255,0.86);--shadow:0 18px 40px rgba(3,10,8,0.06);--elev:0 26px 60px rgba(3,10,8,0.09);}  
+*{box-sizing:border-box;margin:0;padding:0} html,body{height:100%}  
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#eef6eb 0%, var(--bg) 100%);color:var(--text);line-height:1.45;}  
+.app{display:grid;grid-template-columns:260px 1fr 360px;min-height:100vh;}  
+@media(max-width:1000px){.app{grid-template-columns:1fr;grid-template-rows:auto 1fr;}.sidebar{position:sticky;top:0;z-index:120}.rightrail{order:99}}  
+.sidebar{background:linear-gradient(180deg,#ffffff, #f7fbf8);border-right:1px solid rgba(3,10,8,0.04);padding:20px;box-shadow:var(--shadow);}  
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px;}  
+.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;box-shadow:0 8px 24px rgba(11,64,46,0.08)}  
+.brand .title{font-weight:800;font-size:15px}  
+.user-card{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfffb);box-shadow:var(--shadow);margin-bottom:16px}  
+.user-card img{width:42px;height:42px;border-radius:8px;object-fit:cover}  
+.nav{display:flex;flex-direction:column;gap:8px;margin-top:6px;}  
+.nav button{display:flex;align-items:center;gap:12px;border:0;padding:10px;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;font-weight:700;text-align:left;transition:all .18s ease;}  
+.nav button:hover{transform:translateX(6px);color:var(--text)}  
+.nav .active{background:linear-gradient(90deg,var(--accent-1),#57b376);color:white;box-shadow:0 12px 30px rgba(47,157,105,0.12)}  
+.workspace{padding:28px;overflow:auto}  
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}  
+.header-row h1{font-size:20px}  
+.controls{display:flex;align-items:center;gap:10px}  
+.card{background:var(--panel);padding:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}  
+.row{display:flex;gap:16px;align-items:stretch}  
+.col{flex:1}  
+.quick-tools{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}  
+.tool{min-width:180px;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfffb);box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;cursor:pointer;transition:transform .18s ease;}  
+.tool:hover{transform:translateY(-6px)}  
+.tool .icon{width:44px;height:44;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px}  
+.tool.breath .icon{background:linear-gradient(90deg,var(--accent-1),var(--accent-2))}  
+.tool.soil .icon{background:linear-gradient(90deg,#b5651d,#8b5e3c)}  
+.tool.weather .icon{background:linear-gradient(90deg,#0284c7,#60a5fa)}  
+.tool.market .icon{background:linear-gradient(90deg,#f97316,#fb923c)}  
+.fields{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}  
+@media(max-width:900px){.fields{grid-template-columns:1fr}}  
+.field{border-radius:12px;padding:12px;background:linear-gradient(180deg,#fff,#fbfffb);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;transition:transform .18s ease;}  
+.field:hover{transform:translateY(-6px)}  
+.field .meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}  
+.rightrail{padding:20px;position:sticky;top:18px;height:calc(100vh - 36px);overflow:auto}  
+.widget{margin-bottom:16px;border-radius:12px;padding:12px;background:linear-gradient(180deg,#fff,#fbfffb);box-shadow:var(--shadow)}  
+.chat-fab{position:fixed;right:24px;bottom:24px;z-index:140}  
+.chat-btn{width:66px;height:66px;border-radius:999px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-size:20px;box-shadow:var(--elev);cursor:pointer;transition:transform .18s ease;}  
+.chat-btn:hover{transform:translateY(-8px) rotate(-6deg)}  
+.chat-panel{position:fixed;right:24px;bottom:100px;width:420px;height:540px;background:var(--panel);border-radius:12px;box-shadow:var(--elev);overflow:hidden;display:flex;flex-direction:column;z-index:150;transform-origin:bottom right;opacity:0;visibility:hidden;transition:all .28s ease;}  
+.chat-panel.open{opacity:1;visibility:visible;transform:translateY(-12px) scale(1);}  
+.chat-header{padding:12px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white;display:flex;align-items:center;justify-content:space-between}  
+.chat-body{flex:1;padding:12px;overflow:auto;background:linear-gradient(180deg,#fbfff9,#ffffff)}  
+.chat-footer{padding:10px;border-top:1px solid rgba(3,10,8,0.04);display:flex;gap:8px;align-items:center}  
+.msg{max-width:80%;padding:10px 12px;border-radius:12px;margin:8px 0;display:inline-block}  
+.msg.ai{background:#f1fcf6;color:var(--text);border-bottom-left-radius:3px;}  
+.msg.you{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white;margin-left:auto;border-bottom-right-radius:3px;}  
+.market-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}  
+@media(max-width:900px){.market-grid{grid-template-columns:1fr}}  
+.mkt-card{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#fffef8);box-shadow:var(--shadow)}  
+.badge{display:inline-block;padding:6px 8px;border-radius:999px;font-weight:700;color:white;background:var(--accent-1);font-size:12px}  
+.kv{font-size:13px;color:var(--muted)}  
+.small{font-size:13px;color:var(--muted)}  
+.btn{padding:8px 10px;border-radius:10px;border:0;cursor:pointer;font-weight:700}  
+.btn.primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white}  
+.btn.ghost{background:transparent;border:1px solid rgba(3,10,8,0.06)}  
+.file-preview{height:56px;width:56px;border-radius:8px;object-fit:cover}  
+</style>  
+</head>  
+<body>  
+
+<div class="app">  
+  <!-- LEFT SIDEBAR -->  
+  <aside class="sidebar">  
+    <div class="brand">  
+      <div class="logo"><i class="fa-solid fa-seedling"></i></div>  
+      <div><div class="title">AgriSense</div><div class="small" style="color:var(--muted)">AI Crop Advisory + Market</div></div>  
+    </div>  
+    <div class="user-card">  
+      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"/>  
+      <div><div style="font-weight:800">Farmer R. Kumar</div><div class="small">Maharashtra • 12 ha</div></div>  
+    </div>  
+
+    <div class="nav" role="navigation">  
+      <button class="active" data-target="dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>  
+      <button data-target="fields"><i class="fa-solid fa-map-location-dot"></i> My Fields</button>  
+      <button data-target="advisory"><i class="fa-solid fa-robot"></i> AI Advisory</button>  
+      <button data-target="market"><i class="fa-solid fa-shop"></i> Market</button>  
+      <button data-target="soil"><i class="fa-solid fa-vial"></i> Soil Tests</button>  
+      <button data-target="bookings"><i class="fa-solid fa-calendar-check"></i> Book Agronomist</button>  
+      <button data-target="analytics"><i class="fa-solid fa-chart-simple"></i> Reports</button>  
+      <button data-target="settings"><i class="fa-solid fa-gear"></i> Settings</button>  
+    </div>  
+  </aside>  
+
+  <!-- CENTER WORKSPACE -->  
+  <main class="workspace">  
+    <div class="header-row">  
+      <h1>Dashboard</h1>  
+      <div class="controls">  
+        <div class="kv">Location: <strong>Pune, IN</strong></div>  
+        <div class="btn ghost" onclick="alert('Notifications demo')"><i class="fa-solid fa-bell"></i></div>  
+        <div class="btn primary" onclick="openChat()"><i class="fa-solid fa-robot"></i> Ask AI</div>  
+      </div>  
+    </div>  
+
+    <!-- Dashboard content -->  
+    <div id="dashboard" class="card">
+      <h2>Welcome, Farmer R. Kumar!</h2>
+      <p>Your dashboard provides a quick overview of your farm's status and tools for better management.</p>
+      <div class="row" style="margin-bottom:18px;">
+        <div class="col">
+          <div class="card">
+            <div class="small">Total Area (ha)</div>
+            <h2>12</h2>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="small">Active Fields</div>
+            <h2>3</h2>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="small">Last Advisory</div>
+            <h2>2 days ago</h2>
+          </div>
+        </div>
+      </div>
+      <div class="quick-tools" style="margin-bottom:18px;">
+        <div class="tool weather">
+          <div class="icon"><i class="fa-solid fa-cloud-sun"></i></div> Weather Forecast
+        </div>
+        <div class="tool soil">
+          <div class="icon"><i class="fa-solid fa-vial"></i></div> Soil Test
+        </div>
+        <div class="tool market">
+          <div class="icon"><i class="fa-solid fa-coins"></i></div> Market Prices
+        </div>
+        <div class="tool breath">
+          <div class="icon"><i class="fa-solid fa-leaf"></i></div> Crop Health
+        </div>
+      </div>
+      <!-- Add more dashboard widgets here -->
+    </div>  
+
+    <div id="fields" class="card" style="display:none">
+      <h2>My Fields</h2>
+      <button class="btn primary" style="margin-bottom:18px;">Add New Field</button>
+      <div class="fields">
+        <div class="field">
+          <div class="meta"><span>Field 1</span><span>5 ha</span></div>
+          <div>Crop: Wheat</div>
+          <div class="small">Location: Jalgaon</div>
+        </div>
+        <div class="field">
+          <div class="meta"><span>Field 2</span><span>7 ha</span></div>
+          <div>Crop: Sugarcane</div>
+          <div class="small">Location: Pune</div>
+        </div>
+        <div class="field">
+          <div class="meta"><span>Field 3</span><span>0 ha</span></div>
+          <div>Crop: -</div>
+          <div class="small">Empty Field</div>
+        </div>
+      </div>
+    </div>
+  
+    <div id="advisory" class="card" style="display:none">
+      <h2>AI Crop Advisory</h2>
+      <p>Our AI-powered assistant can help you diagnose crop issues, forecast yields, and optimize your farm management.</p>
+      <div class="quick-tools" style="margin-bottom:18px;">
+        <div class="tool breath">
+          <div class="icon"><i class="fa-solid fa-brain"></i></div> Disease Diagnosis
+        </div>
+        <div class="tool weather">
+          <div class="icon"><i class="fa-solid fa-calendar-check"></i></div> Growth Forecast
+        </div>
+        <div class="tool soil">
+          <div class="icon"><i class="fa-solid fa-leaf"></i></div> Crop Suggestions
+        </div>
+      </div>
+      <p>Click the "Ask AI" button to chat with your smart agronomist and get personalized recommendations.</p>
+    </div>
+
+    <div id="market" class="card" style="display:none">
+      <h2>Marketplace</h2>
+      <p>Buy and sell directly on the marketplace. Check out the latest products:</p>
+      <div class="market-grid">
+        <div class="mkt-card">
+          <div class="badge">1</div>
+          <i class="fa-solid fa-seedling"></i>
+          <div>
+            <div class="kv">Certified Seeds</div>
+            <div class="small">High-yield varieties</div>
+          </div>
+        </div>
+        <div class="mkt-card">
+          <div class="badge">2</div>
+          <i class="fa-solid fa-spray-can"></i>
+          <div>
+            <div class="kv">Pesticides</div>
+            <div class="small">Protect your crops</div>
+          </div>
+        </div>
+        <div class="mkt-card">
+          <div class="badge">3</div>
+          <i class="fa-solid fa-tractor"></i>
+          <div>
+            <div class="kv">Equipment</div>
+            <div class="small">Tools & machinery</div>
+          </div>
+        </div>
+        <div class="mkt-card">
+          <div class="badge">4</div>
+          <i class="fa-solid fa-shop"></i>
+          <div>
+            <div class="kv">Market Products</div>
+            <div class="small">Sell your produce</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="soil" class="card" style="display:none">
+      <h2>Soil Tests</h2>
+      <p>Upload your soil analysis report (CSV or PDF) for AI-driven fertilizer recommendations:</p>
+      <input type="file" accept=".csv,.pdf" />
+      <button class="btn primary" style="margin-top:10px;">Submit</button>
+    </div>
+    
+    <div id="bookings" class="card" style="display:none">
+      <h2>Book Agronomist</h2>
+      <p>Select date and time to schedule a visit:</p>
+      <input type="date" /> <input type="time" />
+      <button class="btn primary" style="margin-left:10px;">Book Now</button>
+    </div>
+    
+    <div id="analytics" class="card" style="display:none">
+      <h2>Reports & Analytics</h2>
+      <p>View performance and analytics of your fields:</p>
+      <table style="width:100%; border-collapse: collapse;">
+        <tr>
+          <th style="border:1px solid #ccc; padding:8px;">Month</th>
+          <th style="border:1px solid #ccc; padding:8px;">Yield (kg)</th>
+          <th style="border:1px solid #ccc; padding:8px;">Pests Found</th>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc; padding:8px;">June 2025</td>
+          <td style="border:1px solid #ccc; padding:8px;">1200</td>
+          <td style="border:1px solid #ccc; padding:8px;">2</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc; padding:8px;">July 2025</td>
+          <td style="border:1px solid #ccc; padding:8px;">1350</td>
+          <td style="border:1px solid #ccc; padding:8px;">1</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div id="settings" class="card" style="display:none">
+      <h2>Settings</h2>
+      <div style="margin-bottom:8px;">
+        <label style="display:inline-block; width:120px;">Name:</label>
+        <input type="text" value="Farmer R. Kumar" />
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="display:inline-block; width:120px;">Region:</label>
+        <input type="text" value="Maharashtra" />
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="display:inline-block; width:120px;">Language:</label>
+        <select>
+          <option>English</option>
+          <option>मराठी</option>
+        </select>
+      </div>
+      <button class="btn primary">Save Settings</button>
+    </div>
+  </main>  
+</div>  
+
+<!-- Chatbot Panel -->  
+<div class="chat-fab"><div class="chat-btn" onclick="openChat()"><i class="fa-solid fa-robot"></i></div></div>  
+<div class="chat-panel">  
+  <div class="chat-header"><span>AgriSense AI</span><button onclick="openChat()">✖</button></div>  
+  <div class="chat-body"></div>  
+  <div class="chat-footer">  
+    <input id="chatInput" style="flex:1;padding:8px;border-radius:8px;border:1px solid #ccc"/>  
+    <button class="btn primary" onclick="sendMsg()">Send</button>  
+  </div>  
+</div>  
+
+<script>  
+// Navigation switch  
+document.querySelectorAll('.nav button').forEach(btn=>{  
+  btn.addEventListener('click',()=>{  
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));  
+    btn.classList.add('active');  
+    let target = btn.dataset.target;  
+    document.querySelectorAll('main > .card').forEach(sec=>sec.style.display="none");  
+    let el = document.getElementById(target);  
+    if(el) {  
+      el.style.display="block";  
+      document.querySelector('.header-row h1').textContent = btn.textContent.trim();  
+    }  
+  });  
+});  
+
+// Chat  
+function openChat(initial=""){  
+  let panel=document.querySelector('.chat-panel');  
+  panel.classList.toggle('open');  
+  if(initial){addMessage('you',initial);}  
+}  
+function addMessage(sender,text){  
+  let body=document.querySelector('.chat-body');  
+  let div=document.createElement('div');  
+  div.className="msg "+sender;  
+  div.textContent=text;  
+  body.appendChild(div);  
+  body.scrollTop=body.scrollHeight;  
+}  
+function sendMsg(){  
+  let input=document.getElementById('chatInput');  
+  let text=input.value.trim();  
+  if(text){addMessage('you',text);setTimeout(()=>addMessage('ai',"AI Suggestion for: "+text),600);}  
+  input.value="";  
+}  
+</script>  
+
+</body>  
+</html>

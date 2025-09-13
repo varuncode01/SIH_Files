@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>एग्रीसेंस प्रो - सम्पूर्ण एआई कृषि प्रबंधन मंच</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d8f5d;
+            --primary-light: #4ade80;
+            --primary-dark: #166534;
+            --secondary: #f59e0b;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        #sidebar {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-280px);
+            z-index: 1000;
+        }
+
+        #sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            margin-right: 0.75rem;
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+        
+        .nav-menu {
+            list-style: none;
+            padding: 1rem 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            width: 24px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .nav-link.active i {
+            color: var(--primary);
+        }
+
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        .user-profile img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            border: 2px solid var(--primary);
+        }
+
+        #main-container {
+            flex-grow: 1;
+            padding-left: 0;
+            transition: padding-left 0.3s ease-in-out;
+        }
+        
+        @media (min-width: 1024px) {
+            #sidebar {
+                transform: translateX(0);
+                position: static;
+            }
+            #main-container {
+                padding-left: 280px;
+            }
+        }
+
+        .topbar {
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .hamburger-menu {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        @media (min-width: 1024px) {
+            .hamburger-menu {
+                display: none;
+            }
+        }
+
+        .search-bar {
+            position: relative;
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            font-size: 1rem;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            margin-left: 1rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary);
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+            height: calc(100vh - 80px); /* Adjust based on topbar height */
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+
+        .heading {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .stat-card {
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: var(--primary-dark);
+        }
+
+        .stat-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .quick-actions .grid, .recent-alerts .grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background-color: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--warning);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+        }
+
+        .alert-item i {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .alert-item.success {
+            background-color: var(--success);
+        }
+
+        .alert-item.error {
+            background-color: var(--error);
+        }
+
+        .field-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .field-list th, .field-list td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .field-list th {
+            background-color: var(--bg-primary);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .field-list tr:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .progress-bar-container {
+            background-color: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            height: 8px;
+            width: 100px;
+        }
+
+        .progress-bar {
+            background-color: var(--success);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .ai-section .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .ai-section .card i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .ai-section .card h4 {
+            font-size: 1.125rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .ai-section .card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .ai-section .btn {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .ai-section .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .yield-card {
+            text-align: center;
+        }
+
+        .yield-card .chart {
+            height: 200px;
+            background-color: #f0f4f8;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .yield-card .metric {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .marketplace-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .marketplace-card i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .marketplace-card .btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .marketplace-card .btn:hover {
+            background-color: #0c8c9f;
+        }
+
+        .soil-analysis .card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 1rem;
+        }
+
+        .soil-analysis .results {
+            flex-grow: 1;
+        }
+
+        .soil-analysis .results h5 {
+            margin-top: 0;
+            color: var(--text-secondary);
+        }
+
+        .soil-analysis .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius);
+        }
+
+        .weather-card .current-weather {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .weather-card .current-weather i {
+            font-size: 3rem;
+            margin-right: 1rem;
+            color: var(--accent);
+        }
+
+        .weather-card .forecast {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .weather-card .day {
+            background-color: var(--bg-primary);
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .weather-card .day i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: var(--accent);
+        }
+
+        .weather-card .day p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Generic styles for input/button */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--bg-primary);
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <span>एग्रीसेंस प्रो</span>
+            </div>
+            <span class="hamburger-menu" id="close-sidebar"><i class="fas fa-times"></i></span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#dashboard" class="nav-link active" onclick="switchSection('dashboard')"><i class="fas fa-tachometer-alt"></i>डैशबोर्ड</a></li>
+            <li class="nav-item"><a href="#fields" class="nav-link" onclick="switchSection('fields')"><i class="fas fa-map-marked-alt"></i>मेरे खेत</a></li>
+            <li class="nav-item"><a href="#ai-advisory" class="nav-link" onclick="switchSection('ai-advisory')"><i class="fas fa-robot"></i>एआई सलाह</a></li>
+            <li class="nav-item"><a href="#yield-prediction" class="nav-link" onclick="switchSection('yield-prediction')"><i class="fas fa-chart-line"></i>पैदावार का अनुमान</a></li>
+            <li class="nav-item"><a href="#marketplace" class="nav-link" onclick="switchSection('marketplace')"><i class="fas fa-store"></i>बाजार</a></li>
+            <li class="nav-item"><a href="#soil-analysis" class="nav-link" onclick="switchSection('soil-analysis')"><i class="fas fa-flask"></i>मिट्टी का विश्लेषण</a></li>
+            <li class="nav-item"><a href="#weather" class="nav-link" onclick="switchSection('weather')"><i class="fas fa-cloud-sun"></i>मौसम</a></li>
+            <li class="nav-item"><a href="#pest-disease" class="nav-link" onclick="switchSection('pest-disease')"><i class="fas fa-bug"></i>कीट और रोग</a></li>
+            <li class="nav-item"><a href="#irrigation" class="nav-link" onclick="switchSection('irrigation')"><i class="fas fa-water"></i>सिंचाई</a></li>
+            <li class="nav-item"><a href="#finance" class="nav-link" onclick="switchSection('finance')"><i class="fas fa-rupee-sign"></i>वित्त</a></li>
+            <li class="nav-item"><a href="#community" class="nav-link" onclick="switchSection('community')"><i class="fas fa-users"></i>समुदाय</a></li>
+            <li class="nav-item"><a href="#reports" class="nav-link" onclick="switchSection('reports')"><i class="fas fa-file-alt"></i>रिपोर्ट्स</a></li>
+        </ul>
+        <div class="user-profile">
+            <img src="https://via.placeholder.com/48" alt="User Avatar">
+            <div>
+                <p style="margin:0; font-weight:600;">किसान</p>
+                <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">पुणे, महाराष्ट्र</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="main-container">
+        <div class="topbar">
+            <span class="hamburger-menu" id="open-sidebar"><i class="fas fa-bars"></i></span>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="खोजें...">
+            </div>
+            <div class="user-controls">
+                <button class="icon-btn"><i class="fas fa-bell"></i></button>
+                <button class="icon-btn"><i class="fas fa-cog"></i></button>
+            </div>
+        </div>
+    
+        <div class="main-content">
+            <div id="dashboard" class="section active">
+                <h1 class="heading">डैशबोर्ड</h1>
+                <div class="grid">
+                    <div class="card stat-card">
+                        <i class="fas fa-chart-area card-icon" style="color:var(--primary);"></i>
+                        <h4 class="card-title">कुल क्षेत्र</h4>
+                        <h3>15.5 हेक्टेयर</h3>
+                        <p>पूरे खेत का कुल क्षेत्र</p>
+                    </div>
+                    <div class="card stat-card">
+                        <i class="fas fa-leaf card-icon" style="color:var(--success);"></i>
+                        <h4 class="card-title">सक्रिय खेत</h4>
+                        <h3>3</h3>
+                        <p>कुल सक्रिय फसल क्षेत्र</p>
+                    </div>
+                    <div class="card stat-card">
+                        <i class="fas fa-rupee-sign card-icon" style="color:var(--secondary);"></i>
+                        <h4 class="card-title">मासिक राजस्व</h4>
+                        <h3>₹ 8.5 लाख</h3>
+                        <p>पिछला 30 दिन</p>
+                    </div>
+                    <div class="card stat-card">
+                        <i class="fas fa-heartbeat card-icon" style="color:var(--accent);"></i>
+                        <h4 class="card-title">फसल स्वास्थ्य</h4>
+                        <h3>92%</h3>
+                        <p>एआई द्वारा अनुमानित</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="card" style="flex: 2;">
+                        <h4 class="card-title">वर्तमान मौसम: पुणे, महाराष्ट्र</h4>
+                        <div class="current-weather">
+                            <i class="fas fa-sun"></i>
+                            <div>
+                                <h2>28°C</h2>
+                                <p style="margin:0;">आंशिक धूप</p>
+                                <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">हवा की गति: 10 किमी/घंटा</p>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="day">
+                                <p style="font-weight:600;">आज</p>
+                                <i class="fas fa-cloud-sun"></i>
+                                <p>28°</p>
+                            </div>
+                            <div class="day">
+                                <p style="font-weight:600;">कल</p>
+                                <i class="fas fa-cloud-showers-heavy"></i>
+                                <p>27°</p>
+                            </div>
+                            <div class="day">
+                                <p>सोम</p>
+                                <i class="fas fa-cloud"></i>
+                                <p>25°</p>
+                            </div>
+                            <div class="day">
+                                <p>मंगल</p>
+                                <i class="fas fa-sun"></i>
+                                <p>29°</p>
+                            </div>
+                            <div class="day">
+                                <p>बुध</p>
+                                <i class="fas fa-cloud-sun-rain"></i>
+                                <p>26°</p>
+                            </div>
+                            <div class="day">
+                                <p>गुरु</p>
+                                <i class="fas fa-sun"></i>
+                                <p>28°</p>
+                            </div>
+                            <div class="day">
+                                <p>शुक्र</p>
+                                <i class="fas fa-cloud-showers-heavy"></i>
+                                <p>27°</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="flex: 1;">
+                        <h4 class="card-title">त्वरित कार्य</h4>
+                        <div class="grid quick-actions">
+                            <a href="#" class="action-btn" onclick="generateReport()">
+                                <i class="fas fa-file-alt"></i>
+                                <span style="font-weight:500;">रिपोर्ट तैयार करें</span>
+                            </a>
+                            <a href="#" class="action-btn" onclick="startIrrigation('North')">
+                                <i class="fas fa-tint"></i>
+                                <span style="font-weight:500;">सिंचाई शुरू करें</span>
+                            </a>
+                            <a href="#marketplace" class="action-btn" onclick="switchSection('marketplace')">
+                                <i class="fas fa-store"></i>
+                                <span style="font-weight:500;">बाजार</span>
+                            </a>
+                            <a href="#ai-advisory" class="action-btn" onclick="switchSection('ai-advisory')">
+                                <i class="fas fa-robot"></i>
+                                <span style="font-weight:500;">एआई सलाह</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h4 class="card-title">हाल के अलर्ट</h4>
+                    <div class="recent-alerts">
+                        <div class="alert-item error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p style="margin:0;">उत्तर खेत में नमी कम है। आज सिंचाई आवश्यक है।</p>
+                        </div>
+                        <div class="alert-item warning">
+                            <i class="fas fa-bug"></i>
+                            <p style="margin:0;">दक्षिण खेत में कीटों के प्रकोप का खतरा। एआई सलाह अनुभाग देखें।</p>
+                        </div>
+                        <div class="alert-item success">
+                            <i class="fas fa-check-circle"></i>
+                            <p style="margin:0;">पूर्व खेत में कटाई के लिए तैयार है।</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="fields" class="section">
+                <h1 class="heading">मेरे खेत</h1>
+                <div class="card field-list">
+                    <h4 class="card-title">खेतों की सूची</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>खेत का नाम</th>
+                                <th>फसल</th>
+                                <th>क्षेत्र</th>
+                                <th>लगाने की तिथि</th>
+                                <th>अनुमानित कटाई</th>
+                                <th>प्रगति</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>उत्तर खेत</td>
+                                <td>गेहूँ</td>
+                                <td>6.5 हेक्टेयर</td>
+                                <td>10 नवंबर, 2024</td>
+                                <td>15 अप्रैल, 2025</td>
+                                <td>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" style="width: 80%;"></div>
+                                    </div>
+                                    <span style="font-size:0.875rem;">80%</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>दक्षिण खेत</td>
+                                <td>गन्ना</td>
+                                <td>5.0 हेक्टेयर</td>
+                                <td>5 दिसंबर, 2024</td>
+                                <td>30 अक्टूबर, 2025</td>
+                                <td>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" style="width: 45%; background-color: var(--warning);"></div>
+                                    </div>
+                                    <span style="font-size:0.875rem;">45%</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>पूर्व खेत</td>
+                                <td>कपास</td>
+                                <td>4.0 हेक्टेयर</td>
+                                <td>20 जनवरी, 2025</td>
+                                <td>15 सितंबर, 2025</td>
+                                <td>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" style="width: 25%; background-color: var(--error);"></div>
+                                    </div>
+                                    <span style="font-size:0.875rem;">25%</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="ai-advisory" class="section">
+                <h1 class="heading">एआई सलाह</h1>
+                <div class="grid ai-section">
+                    <div class="card">
+                        <i class="fas fa-leaf"></i>
+                        <h4>फसल रोग पहचान</h4>
+                        <p>अपनी फसल के फोटो अपलोड करके तुरंत रोग की पहचान करें।</p>
+                        <button class="btn">फोटो अपलोड करें</button>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-seedling"></i>
+                        <h4>फसल की सिफ़ारिश</h4>
+                        <p>अपने खेत और मिट्टी के विवरण के आधार पर सबसे उपयुक्त फसल की सलाह पाएं।</p>
+                        <button class="btn">शुरू करें</button>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>बढ़त अनुकूलन</h4>
+                        <p>एआई से अपनी फसल के लिए उर्वरक और सिंचाई पर सुझाव लें।</p>
+                        <button class="btn">सलाह पाएं</button>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h4 class="card-title">हाल की सिफारिशें</h4>
+                    <ul>
+                        <li>**उत्तर खेत:** नाइट्रोजन उर्वरक की मात्रा बढ़ाएँ।</li>
+                        <li>**दक्षिण खेत:** फसल को फफूंद से बचाने के लिए फफूंदनाशक का छिड़काव करें।</li>
+                        <li>**पूर्व खेत:** पौधों को स्वस्थ रखने के लिए नियमित रूप से खरपतवार हटाएँ।</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="yield-prediction" class="section">
+                <h1 class="heading">पैदावार का अनुमान</h1>
+                <div class="grid">
+                    <div class="card yield-card">
+                        <h4 class="card-title">उत्तर खेत (गेहूँ)</h4>
+                        <div class="chart">
+                            <span>पैदावार का अनुमानित चार्ट</span>
+                        </div>
+                        <div class="metric">3.5 टन/हेक्टेयर</div>
+                        <p>अनुमानित पैदावार</p>
+                        <hr style="width:50%; border-color:var(--border);">
+                        <div class="metric">₹ 1.4 लाख</div>
+                        <p>अनुमानित राजस्व</p>
+                    </div>
+                    <div class="card yield-card">
+                        <h4 class="card-title">दक्षिण खेत (गन्ना)</h4>
+                        <div class="chart">
+                            <span>पैदावार का अनुमानित चार्ट</span>
+                        </div>
+                        <div class="metric">60 टन/हेक्टेयर</div>
+                        <p>अनुमानित पैदावार</p>
+                        <hr style="width:50%; border-color:var(--border);">
+                        <div class="metric">₹ 2.4 लाख</div>
+                        <p>अनुमानित राजस्व</p>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h4 class="card-title">पैदावार को प्रभावित करने वाले कारक</h4>
+                    <p>एआई मॉडल निम्नलिखित कारकों का उपयोग करके पैदावार का अनुमान लगाता है:</p>
+                    <ul>
+                        <li>**मिट्टी की नमी:** सेंसर से वास्तविक समय डेटा।</li>
+                        <li>**मौसम:** तापमान, बारिश और धूप के घंटे।</li>
+                        <li>**कीटों का दबाव:** पिछले डेटा और एआई पहचान के आधार पर जोखिम।</li>
+                        <li>**उर्वरक उपयोग:** फसल के प्रकार के लिए उपयोग किए गए पोषक तत्व।</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="marketplace" class="section">
+                <h1 class="heading">बाजार</h1>
+                <div class="grid">
+                    <div class="card marketplace-card">
+                        <i class="fas fa-truck"></i>
+                        <h4>सामान खरीदें</h4>
+                        <p>बीज, उर्वरक और कीटनाशक जैसे कृषि सामान खरीदें।</p>
+                        <button class="btn">अभी खरीदारी करें</button>
+                    </div>
+                    <div class="card marketplace-card">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h4>उपज बेचें</h4>
+                        <p>अपनी फसल की लिस्टिंग करें और खरीदारों से सीधे जुड़ें।</p>
+                        <button class="btn">अपनी उपज बेचें</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="soil-analysis" class="section">
+                <h1 class="heading">मिट्टी का विश्लेषण</h1>
+                <div class="card soil-analysis">
+                    <div class="card-header">
+                        <i class="fas fa-flask card-icon"></i>
+                        <h4 class="card-title">अपनी मिट्टी की रिपोर्ट का विश्लेषण करें</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="results">
+                            <h5>हाल के विश्लेषण के परिणाम:</h5>
+                            <div class="result-item">
+                                <span>पीएच स्तर:</span>
+                                <span>**6.8 (सामान्य)**</span>
+                            </div>
+                            <div class="result-item">
+                                <span>जैविक पदार्थ:</span>
+                                <span>**2.5% (कम)**</span>
+                            </div>
+                            <div class="result-item">
+                                <span>नाइट्रोजन स्तर:</span>
+                                <span>**120 किग्रा/हेक्टेयर (पर्याप्त)**</span>
+                            </div>
+                            <div style="margin-top:1rem;">
+                                <h5>एआई सिफारिशें:</h5>
+                                <p>जैविक पदार्थ का स्तर बढ़ाने के लिए जैविक खाद डालें।</p>
+                            </div>
+                        </div>
+                        <div class="upload-form" style="width: 250px; text-align: center;">
+                            <i class="fas fa-file-upload" style="font-size:4rem; color:var(--text-secondary); opacity:0.5; margin-bottom:1rem;"></i>
+                            <button class="btn-primary">रिपोर्ट अपलोड करें</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="weather" class="section">
+                <h1 class="heading">मौसम</h1>
+                <div class="card weather-card">
+                    <h4 class="card-title">पुणे, महाराष्ट्र</h4>
+                    <div class="current-weather">
+                        <i class="fas fa-cloud-sun"></i>
+                        <h2>28°C</h2>
+                    </div>
+                    <p style="text-align:center; font-size:1.125rem;">आंशिक धूप</p>
+                    <p style="text-align:center; font-size:0.875rem; color:var(--text-secondary);">हवा की गति: 10 किमी/घंटा</p>
+                    <hr>
+                    <h4 style="margin-top:1.5rem; text-align:center;">7-दिन का पूर्वानुमान</h4>
+                    <div class="forecast">
+                        <div class="day">
+                            <p>सोम</p>
+                            <i class="fas fa-cloud"></i>
+                            <p>25°</p>
+                        </div>
+                        <div class="day">
+                            <p>मंगल</p>
+                            <i class="fas fa-sun"></i>
+                            <p>29°</p>
+                        </div>
+                        <div class="day">
+                            <p>बुध</p>
+                            <i class="fas fa-cloud-sun-rain"></i>
+                            <p>26°</p>
+                        </div>
+                        <div class="day">
+                            <p>गुरु</p>
+                            <i class="fas fa-sun"></i>
+                            <p>28°</p>
+                        </div>
+                        <div class="day">
+                            <p>शुक्र</p>
+                            <i class="fas fa-cloud-showers-heavy"></i>
+                            <p>27°</p>
+                        </div>
+                        <div class="day">
+                            <p>शनि</p>
+                            <i class="fas fa-cloud-sun"></i>
+                            <p>28°</p>
+                        </div>
+                        <div class="day">
+                            <p>रवि</p>
+                            <i class="fas fa-cloud"></i>
+                            <p>26°</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pest-disease" class="section">
+                <h1 class="heading">कीट और रोग</h1>
+                <p>इस अनुभाग को जल्द ही भरा जाएगा।</p>
+            </div>
+            <div id="irrigation" class="section">
+                <h1 class="heading">सिंचाई</h1>
+                <p>इस अनुभाग को जल्द ही भरा जाएगा।</p>
+            </div>
+            <div id="finance" class="section">
+                <h1 class="heading">वित्त</h1>
+                <p>इस अनुभाग को जल्द ही भरा जाएगा।</p>
+            </div>
+            <div id="community" class="section">
+                <h1 class="heading">समुदाय</h1>
+                <p>इस अनुभाग को जल्द ही भरा जाएगा।</p>
+            </div>
+            <div id="reports" class="section">
+                <h1 class="heading">रिपोर्ट्स</h1>
+                <p>इस अनुभाग को जल्द ही भरा जाएगा।</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JS functionality
+        document.getElementById('open-sidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('main-container').style.paddingLeft = '280px';
+        });
+
+        document.getElementById('close-sidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('main-container').style.paddingLeft = '0';
+        });
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
+
+            if (window.innerWidth < 1024) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('main-container').style.paddingLeft = '0';
+            }
+        }
+
+        // Example alert functions (placeholders)
+        function inspectField(field) {
+            alert(`Manual inspection initiated for ${field} field.`);
+        }
+
+        function startManualIrrigation(field) {
+            alert(`Manual irrigation started for ${field} field.\n\nEstimated duration: 45 minutes\nWater usage: ~800 liters\n\nSystem will return to auto mode after completion.`);
+        }
+
+        function startIrrigation(field) {
+            alert(`Irrigation started for ${field} field.\n\nDuration: 60 minutes\nWater usage: ~1200 liters\n\nSoil moisture will be optimal after completion.`);
+        }
+
+        function generateReport() {
+            alert('व्यापक कृषि रिपोर्ट तैयार की गई!\n\nइसमें शामिल हैं:\n• सभी खेतों में पैदावार का विश्लेषण\n• वित्तीय प्रदर्शन के मापदंड\n• संसाधन उपयोग की दक्षता\n• अगले मौसम के लिए सिफारिशें\n\nरिपोर्ट आपके डैशबोर्ड में सहेजी गई है।');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show dashboard by default
+            switchSection('dashboard');
+            
+            // Auto-scroll to top when switching sections
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.querySelector('.main-content').scrollTop = 0;
+                });
+            });
+        });
+
+        // Handle window resize for mobile responsiveness
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

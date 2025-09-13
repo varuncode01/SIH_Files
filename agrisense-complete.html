@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSense Pro - Complete AI Farm Management Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d8f5d;
+            --primary-light: #4ade80;
+            --primary-dark: #166534;
+            --secondary: #f59e0b;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .mobile-header {
+                display: block;
+            }
+        }
+
+        .mobile-header {
+            display: none;
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .brand-text h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .user-profile {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .user-details h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .fields-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .field-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .field-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-healthy {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-content {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .chat-fab {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.2s ease;
+        }
+
+        .chat-fab:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            flex-direction: column;
+            transform: scale(0) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .chat-panel.open {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: linear-gradient(145deg, #fafbfc 0%, #ffffff 100%);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 16px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai {
+            background: #f1f5f9;
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            background: var(--bg-primary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: #fee2e2;
+            color: var(--error);
+        }
+
+        .weather-widget {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .weather-forecast {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .forecast-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--bg-primary);
+        }
+
+        .notification {
+            background: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tools-grid,
+            .fields-grid,
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-panel {
+                width: 320px;
+            }
+        }
+
+        /* Color themes for different tools */
+        .weather-theme { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); }
+        .soil-theme { background: linear-gradient(135deg, #a16207 0%, #ca8a04 100%); }
+        .crop-theme { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
+        .market-theme { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+        .analytics-theme { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="btn-secondary" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2>AgriSense Pro</h2>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="logo">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>AgriSense Pro</h2>
+                    <p>AI Farm Management</p>
+                </div>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60" alt="Farmer" class="user-avatar">
+                    <div class="user-details">
+                        <h3>Rajesh Kumar</h3>
+                        <p>Maharashtra • 15.5 hectares</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="dashboard">
+                            <i class="fas fa-home"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="fields">
+                            <i class="fas fa-map-location-dot"></i>
+                            My Fields
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="ai-advisory">
+                            <i class="fas fa-robot"></i>
+                            AI Advisory
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="yield-prediction">
+                            <i class="fas fa-chart-line"></i>
+                            Yield Prediction
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="marketplace">
+                            <i class="fas fa-store"></i>
+                            Marketplace
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="soil-analysis">
+                            <i class="fas fa-vial"></i>
+                            Soil Analysis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="weather">
+                            <i class="fas fa-cloud-sun"></i>
+                            Weather
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="pest-disease">
+                            <i class="fas fa-bug"></i>
+                            Pest & Disease
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="irrigation">
+                            <i class="fas fa-tint"></i>
+                            Irrigation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="finance">
+                            <i class="fas fa-coins"></i>
+                            Finance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="community">
+                            <i class="fas fa-users"></i>
+                            Community
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            Reports
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <span class="text-secondary">📍 Pune, Maharashtra</span>
+                    <button class="btn-secondary" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-primary" onclick="toggleChat()">
+                        <i class="fas fa-robot"></i>
+                        Ask AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon crop-theme">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-value">15.5</div>
+                        <div class="stat-label">Total Area (ha)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon weather-theme">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Active Fields</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon market-theme">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-value">₹2.4L</div>
+                        <div class="stat-label">Monthly Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon analytics-theme">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-value">94%</div>
+                        <div class="stat-label">Crop Health</div>
+                    </div>
+                </div>
+
+                <div class="weather-widget">
+                    <div class="weather-main">
+                        <div>
+                            <h3>Today's Weather</h3>
+                            <p>Pune, Maharashtra</p>
+                        </div>
+                        <div class="weather-temp">28°C</div>
+                        <div>
+                            <i class="fas fa-cloud-sun fa-3x"></i>
+                            <p>Partly Cloudy</p>
+                        </div>
+                    </div>
+                    <div class="weather-forecast">
+                        <div class="forecast-item">
+                            <div>Tomorrow</div>
+                            <i class="fas fa-sun"></i>
+                            <div>30°C</div>
+                        </div>
+                        <div class="forecast-item">
+                            <div>Monday</div>
+                            <i class="fas fa-cloud-rain"></i>
+                            <div>25°C</div>
+                        </div>
+                        <div class="forecast-item">
+                            <div>Tuesday</div>
+                            <i class="fas fa-cloud"></i>
+                            <div>27°C</div>
+                        </div>
+                        <div class="forecast-item">
+                            <div>Wednesday</div>
+                            <i class="fas fa-sun"></i>
+                            <div>32°C</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div class="tools-grid">
+                        <div class="tool-card" onclick="switchSection('ai-advisory')">
+                            <div class="tool-header">
+                                <div class="tool-icon crop-theme">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div>
+                                    <h3>AI Crop Advisory</h3>
+                                    <p>Get personalized recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="switchSection('yield-prediction')">
+                            <div class="tool-header">
+                                <div class="tool-icon analytics-theme">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h3>Yield Prediction</h3>
+                                    <p>Forecast your crop yield</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="switchSection('marketplace')">
+                            <div class="tool-header">
+                                <div class="tool-icon market-theme">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <div>
+                                    <h3>Marketplace</h3>
+                                    <p>Buy supplies, sell produce</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="switchSection('soil-analysis')">
+                            <div class="tool-header">
+                                <div class="tool-icon soil-theme">
+                                    <i class="fas fa-vial"></i>
+                                </div>
+                                <div>
+                                    <h3>Soil Analysis</h3>
+                                    <p>Test soil health & nutrients</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Alerts</h2>
+                    </div>
+                    <div>
+                        <div class="alert" style="padding: 1rem; background: #fef3c7; border-radius: 10px; margin-bottom: 0.5rem;">
+                            <strong>Weather Alert:</strong> Heavy rain expected in 2 days. Consider protective measures for Field 2.
+                        </div>
+                        <div class="alert" style="padding: 1rem; background: #dcfce7; border-radius: 10px; margin-bottom: 0.5rem;">
+                            <strong>Market Opportunity:</strong> Tomato prices increased by 15% - good time to sell!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fields Section -->
+            <section id="fields" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Fields</h2>
+                        <button class="btn-primary" onclick="showAddFieldModal()">
+                            <i class="fas fa-plus"></i>
+                            Add New Field
+                        </button>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-card">
+                            <div class="field-status status-healthy">Healthy</div>
+                            <h3>North Field</h3>
+                            <p><strong>Crop:</strong> Wheat</p>
+                            <p><strong>Area:</strong> 6.5 hectares</p>
+                            <p><strong>Planted:</strong> November 15, 2024</p>
+                            <p><strong>Expected Harvest:</strong> March 2025</p>
+                            <div class="progress-bar" style="margin-top: 1rem;">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">Growth Progress: 65%</p>
+                        </div>
+                        <div class="field-card">
+                            <div class="field-status status-warning">Monitor</div>
+                            <h3>South Field</h3>
+                            <p><strong>Crop:</strong> Sugarcane</p>
+                            <p><strong>Area:</strong> 5.0 hectares</p>
+                            <p><strong>Planted:</strong> February 10, 2024</p>
+                            <p><strong>Expected Harvest:</strong> December 2025</p>
+                            <div class="progress-bar" style="margin-top: 1rem;">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">Growth Progress: 80%</p>
+                        </div>
+                        <div class="field-card">
+                            <div class="field-status status-healthy">Healthy</div>
+                            <h3>East Field</h3>
+                            <p><strong>Crop:</strong> Cotton</p>
+                            <p><strong>Area:</strong> 4.0 hectares</p>
+                            <p><strong>Planted:</strong> June 20, 2024</p>
+                            <p><strong>Expected Harvest:</strong> October 2025</p>
+                            <div class="progress-bar" style="margin-top: 1rem;">
+                                <div class="progress-fill" style="width: 45%;"></div>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">Growth Progress: 45%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Advisory Section -->
+            <section id="ai-advisory" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">AI Crop Advisory</h2>
+                    </div>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon crop-theme">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <div>
+                                    <h3>Plant Disease Detection</h3>
+                                    <p>Upload plant photos for AI diagnosis</p>
+                                </div>
+                            </div>
+                            <div class="upload-area" onclick="document.getElementById('disease-upload').click()">
+                                <i class="fas fa-cloud-upload-alt fa-2x" style="color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                                <p>Click to upload plant images</p>
+                                <input type="file" id="disease-upload" accept="image/*" style="display: none;" onchange="analyzePlantDisease(this)">
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon analytics-theme">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <div>
+                                    <h3>Crop Recommendation</h3>
+                                    <p>Best crops for your soil & climate</p>
+                                </div>
+                            </div>
+                            <button class="btn-primary" onclick="getCropRecommendations()">Get Recommendations</button>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon soil-theme">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div>
+                                    <h3>Growth Optimization</h3>
+                                    <p>Optimize planting & harvesting times</p>
+                                </div>
+                            </div>
+                            <button class="btn-primary" onclick="optimizeGrowth()">Optimize Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent AI Recommendations</h2>
+                    </div>
+                    <div style="space-y: 1rem;">
+                        <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <strong>North Field - Wheat</strong>
+                                <span class="badge badge-success">Action Taken</span>
+                            </div>
+                            <p>Increase nitrogen fertilizer application by 15% based on soil analysis. Expected yield improvement: 8-12%.</p>
+                        </div>
+                        <div style="padding: 1rem; background: #fef3c7; border-radius: 10px; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <strong>South Field - Sugarcane</strong>
+                                <span class="badge badge-warning">Pending</span>
+                            </div>
+                            <p>Detected early signs of red rot disease. Apply copper-based fungicide within 48 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Yield Prediction Section -->
+            <section id="yield-prediction" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">AI Yield Prediction</h2>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-card">
+                            <h3>North Field - Wheat</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                <span>Predicted Yield:</span>
+                                <strong style="font-size: 1.25rem; color: var(--primary);">28.5 tonnes</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Confidence:</span>
+                                <strong>92%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Expected Revenue:</span>
+                                <strong>₹5,70,000</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                <span>Market Price Trend:</span>
+                                <span style="color: var(--success);">↗ +8%</span>
+                            </div>
+                            <button class="btn-secondary" onclick="showDetailedPrediction('wheat')">View Details</button>
+                        </div>
+                        <div class="field-card">
+                            <h3>South Field - Sugarcane</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                <span>Predicted Yield:</span>
+                                <strong style="font-size: 1.25rem; color: var(--primary);">320 tonnes</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Confidence:</span>
+                                <strong>89%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Expected Revenue:</span>
+                                <strong>₹9,60,000</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                <span>Market Price Trend:</span>
+                                <span style="color: var(--error);">↘ -3%</span>
+                            </div>
+                            <button class="btn-secondary" onclick="showDetailedPrediction('sugarcane')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Factors Affecting Yield</h2>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Factor</th>
+                                <th>Current Status</th>
+                                <th>Impact on Yield</th>
+                                <th>Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Soil Moisture</td>
+                                <td><span class="badge badge-success">Optimal</span></td>
+                                <td>+5%</td>
+                                <td>Maintain current irrigation</td>
+                            </tr>
+                            <tr>
+                                <td>Weather Conditions</td>
+                                <td><span class="badge badge-warning">Monitor</span></td>
+                                <td>-2%</td>
+                                <td>Prepare for rain protection</td>
+                            </tr>
+                            <tr>
+                                <td>Pest Pressure</td>
+                                <td><span class="badge badge-success">Low</span></td>
+                                <td>+3%</td>
+                                <td>Continue monitoring</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Marketplace Section -->
+            <section id="marketplace" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Agricultural Marketplace</h2>
+                        <div>
+                            <button class="btn-secondary" onclick="switchMarketTab('buy')">Buy Supplies</button>
+                            <button class="btn-primary" onclick="switchMarketTab('sell')">Sell Produce</button>
+                        </div>
+                    </div>
+                    
+                    <div id="buy-tab">
+                        <h3 style="margin-bottom: 1rem;">Agricultural Supplies</h3>
+                        <div class="market-grid">
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=400&q=60" alt="Seeds" class="product-image">
+                                <div class="product-content">
+                                    <h3 class="product-title">Premium Wheat Seeds</h3>
+                                    <p>High-yield variety suitable for Maharashtra climate</p>
+                                    <div class="product-price">₹45/kg</div>
+                                    <button class="btn-primary" onclick="addToCart('wheat-seeds')">Add to Cart</button>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=400&q=60" alt="Fertilizer" class="product-image">
+                                <div class="product-content">
+                                    <h3 class="product-title">Organic Fertilizer</h3>
+                                    <p>NPK 10:26:26 - Balanced nutrition for all crops</p>
+                                    <div class="product-price">₹680/50kg</div>
+                                    <button class="btn-primary" onclick="addToCart('fertilizer')">Add to Cart</button>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1585314062604-1a357de8b000?auto=format&fit=crop&w=400&q=60" alt="Pesticide" class="product-image">
+                                <div class="product-content">
+                                    <h3 class="product-title">Bio Pesticide</h3>
+                                    <p>Effective against aphids and thrips</p>
+                                    <div class="product-price">₹320/liter</div>
+                                    <button class="btn-primary" onclick="addToCart('pesticide')">Add to Cart</button>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?auto=format&fit=crop&w=400&q=60" alt="Equipment" class="product-image">
+                                <div class="product-content">
+                                    <h3 class="product-title">Irrigation Sprinkler</h3>
+                                    <p>Water-efficient irrigation system</p>
+                                    <div class="product-price">₹1,200/piece</div>
+                                    <button class="btn-primary" onclick="addToCart('sprinkler')">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sell-tab" style="display: none;">
+                        <h3 style="margin-bottom: 1rem;">Sell Your Produce</h3>
+                        <div class="card" style="background: var(--bg-primary);">
+                            <div class="form-group">
+                                <label class="form-label">Crop Type</label>
+                                <select class="form-input">
+                                    <option>Select crop...</option>
+                                    <option>Wheat</option>
+                                    <option>Sugarcane</option>
+                                    <option>Cotton</option>
+                                    <option>Rice</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quantity (kg)</label>
+                                <input type="number" class="form-input" placeholder="Enter quantity">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Expected Price (₹/kg)</label>
+                                <input type="number" class="form-input" placeholder="Enter your expected price">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quality Grade</label>
+                                <select class="form-input">
+                                    <option>Select grade...</option>
+                                    <option>Grade A (Premium)</option>
+                                    <option>Grade B (Standard)</option>
+                                    <option>Grade C (Basic)</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="listProduce()">List for Sale</button>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <h4>Current Market Prices</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Crop</th>
+                                        <th>Market Price</th>
+                                        <th>Trend</th>
+                                        <th>Demand</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Wheat</td>
+                                        <td>₹20/kg</td>
+                                        <td style="color: var(--success);">↗ +5%</td>
+                                        <td><span class="badge badge-success">High</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sugarcane</td>
+                                        <td>₹30/kg</td>
+                                        <td style="color: var(--error);">↘ -2%</td>
+                                        <td><span class="badge badge-warning">Medium</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cotton</td>
+                                        <td>₹45/kg</td>
+                                        <td style="color: var(--success);">↗ +8%</td>
+                                        <td><span class="badge badge-success">High</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Soil Analysis Section -->
+            <section id="soil-analysis" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Soil Health Analysis</h2>
+                    </div>
+                    <div class="upload-area" onclick="document.getElementById('soil-upload').click()">
+                        <i class="fas fa-cloud-upload-alt fa-3x" style="color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>Upload Soil Test Report</h3>
+                        <p>Support formats: PDF, CSV, JPG, PNG</p>
+                        <input type="file" id="soil-upload" accept=".pdf,.csv,.jpg,.jpeg,.png" style="display: none;" onchange="analyzeSoil(this)">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Soil Analysis - North Field</h2>
+                        <span class="badge badge-success">Healthy</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">7.2</div>
+                            <div>pH Level</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Slightly Alkaline</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">2.8%</div>
+                            <div>Organic Matter</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Good</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">180</div>
+                            <div>Nitrogen (ppm)</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Moderate</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">45</div>
+                            <div>Phosphorus (ppm)</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Adequate</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0f9ff; padding: 1rem; border-radius: 10px; margin-top: 1rem;">
+                        <h4>AI Recommendations:</h4>
+                        <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                            <li>Apply 25 kg urea per hectare to improve nitrogen levels</li>
+                            <li>Add organic compost to maintain soil structure</li>
+                            <li>Consider lime application to balance pH in the next season</li>
+                            <li>Implement crop rotation with legumes to naturally fix nitrogen</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Section -->
+            <section id="weather" class="section">
+                <div class="weather-widget">
+                    <div class="weather-main">
+                        <div>
+                            <h2>Current Weather</h2>
+                            <p>Pune, Maharashtra</p>
+                            <p>Feels like 32°C</p>
+                        </div>
+                        <div class="weather-temp">28°C</div>
+                        <div style="text-align: center;">
+                            <i class="fas fa-cloud-sun fa-4x"></i>
+                            <p>Partly Cloudy</p>
+                            <p>Humidity: 65%</p>
+                            <p>Wind: 12 km/h NE</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">7-Day Weather Forecast</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Today</div>
+                            <i class="fas fa-cloud-sun fa-2x" style="margin: 0.5rem 0; color: #fbbf24;"></i>
+                            <div>28°C</div>
+                            <div style="font-size: 0.75rem;">0% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Tomorrow</div>
+                            <i class="fas fa-sun fa-2x" style="margin: 0.5rem 0; color: #f59e0b;"></i>
+                            <div>30°C</div>
+                            <div style="font-size: 0.75rem;">5% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Monday</div>
+                            <i class="fas fa-cloud-rain fa-2x" style="margin: 0.5rem 0; color: #6b7280;"></i>
+                            <div>25°C</div>
+                            <div style="font-size: 0.75rem;">75% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Tuesday</div>
+                            <i class="fas fa-cloud fa-2x" style="margin: 0.5rem 0; color: #9ca3af;"></i>
+                            <div>27°C</div>
+                            <div style="font-size: 0.75rem;">30% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Wednesday</div>
+                            <i class="fas fa-sun fa-2x" style="margin: 0.5rem 0; color: #f59e0b;"></i>
+                            <div>32°C</div>
+                            <div style="font-size: 0.75rem;">0% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Thursday</div>
+                            <i class="fas fa-sun fa-2x" style="margin: 0.5rem 0; color: #f59e0b;"></i>
+                            <div>34°C</div>
+                            <div style="font-size: 0.75rem;">10% rain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div>Friday</div>
+                            <i class="fas fa-cloud-sun fa-2x" style="margin: 0.5rem 0; color: #fbbf24;"></i>
+                            <div>29°C</div>
+                            <div style="font-size: 0.75rem;">20% rain</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Agricultural Weather Alerts</h2>
+                    </div>
+                    <div>
+                        <div style="padding: 1rem; background: #fee2e2; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--error);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--error);"></i>
+                                <strong>Heavy Rain Alert</strong>
+                            </div>
+                            <p>Heavy rainfall expected on Monday (75mm+). Consider harvesting mature crops and protecting young plants.</p>
+                        </div>
+                        <div style="padding: 1rem; background: #fef3c7; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-thermometer-half" style="color: var(--warning);"></i>
+                                <strong>Temperature Warning</strong>
+                            </div>
+                            <p>High temperatures (34°C) expected Thursday-Friday. Increase irrigation frequency for sensitive crops.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pest & Disease Section -->
+            <section id="pest-disease" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Pest & Disease Management</h2>
+                    </div>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon market-theme">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <div>
+                                    <h3>Disease Detection</h3>
+                                    <p>Upload photos for AI diagnosis</p>
+                                </div>
+                            </div>
+                            <div class="upload-area" onclick="document.getElementById('disease-photo').click()">
+                                <i class="fas fa-camera fa-2x" style="color: var(--text-secondary); margin-bottom: 0.5rem;"></i>
+                                <p>Take or upload plant photos</p>
+                                <input type="file" id="disease-photo" accept="image/*" capture="camera" style="display: none;" onchange="detectDisease(this)">
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon soil-theme">
+                                    <i class="fas fa-bug"></i>
+                                </div>
+                                <div>
+                                    <h3>Pest Monitoring</h3>
+                                    <p>Track pest population levels</p>
+                                </div>
+                            </div>
+                            <button class="btn-primary" onclick="showPestMonitoring()">View Pest Levels</button>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-icon weather-theme">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <h3>Treatment Schedule</h3>
+                                    <p>Plan preventive treatments</p>
+                                </div>
+                            </div>
+                            <button class="btn-primary" onclick="createTreatmentPlan()">Create Schedule</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Active Pest Alerts</h2>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Pest/Disease</th>
+                                <th>Severity</th>
+                                <th>Action Required</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>South Field</td>
+                                <td>Aphids</td>
+                                <td><span class="badge badge-warning">Medium</span></td>
+                                <td>Apply neem oil spray</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>East Field</td>
+                                <td>Cotton Bollworm</td>
+                                <td><span class="badge badge-error">High</span></td>
+                                <td>Immediate insecticide application</td>
+                                <td><span class="badge badge-error">Urgent</span></td>
+                            </tr>
+                            <tr>
+                                <td>North Field</td>
+                                <td>Leaf Rust</td>
+                                <td><span class="badge badge-success">Low</span></td>
+                                <td>Monitor regularly</td>
+                                <td><span class="badge badge-success">Controlled</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Irrigation Section -->
+            <section id="irrigation" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Smart Irrigation Management</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon weather-theme">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="stat-value">2,450L</div>
+                            <div class="stat-label">Today's Water Usage</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon crop-theme">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <div class="stat-value">68%</div>
+                            <div class="stat-label">Avg. Soil Moisture</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon market-theme">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-value">6:30 AM</div>
+                            <div class="stat-label">Next Irrigation</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon analytics-theme">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div class="stat-value">15%</div>
+                            <div class="stat-label">Water Savings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Field Irrigation Status</h2>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3>North Field</h3>
+                                <span class="badge badge-success">Auto Mode</span>
+                            </div>
+                            <p><strong>Crop:</strong> Wheat</p>
+                            <p><strong>Soil Moisture:</strong> 72% (Optimal)</p>
+                            <p><strong>Last Irrigation:</strong> 2 hours ago</p>
+                            <p><strong>Next Scheduled:</strong> Tomorrow 6:00 AM</p>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn-secondary" onclick="manualIrrigation('north')">Manual Override</button>
+                            </div>
+                        </div>
+                        <div class="field-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3>South Field</h3>
+                                <span class="badge badge-warning">Manual Mode</span>
+                            </div>
+                            <p><strong>Crop:</strong> Sugarcane</p>
+                            <p><strong>Soil Moisture:</strong> 58% (Low)</p>
+                            <p><strong>Last Irrigation:</strong> 18 hours ago</p>
+                            <p><strong>Recommended:</strong> Irrigate now</p>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn-primary" onclick="startIrrigation('south')">Start Irrigation</button>
+                            </div>
+                        </div>
+                        <div class="field-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3>East Field</h3>
+                                <span class="badge badge-success">Auto Mode</span>
+                            </div>
+                            <p><strong>Crop:</strong> Cotton</p>
+                            <p><strong>Soil Moisture:</strong> 65% (Good)</p>
+                            <p><strong>Last Irrigation:</strong> 8 hours ago</p>
+                            <p><strong>Next Scheduled:</strong> Tonight 10:00 PM</p>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn-secondary" onclick="adjustSchedule('east')">Adjust Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Finance Section -->
+            <section id="finance" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Financial Overview</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon crop-theme">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="stat-value">₹2.4L</div>
+                            <div class="stat-label">Monthly Revenue</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon market-theme">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-value">₹85K</div>
+                            <div class="stat-label">Monthly Expenses</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon analytics-theme">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="stat-value">₹1.55L</div>
+                            <div class="stat-label">Net Profit</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon weather-theme">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-value">182%</div>
+                            <div class="stat-label">ROI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Expense Breakdown</h2>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>This Month</th>
+                                <th>Last Month</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Seeds & Planting</td>
+                                <td>₹25,000</td>
+                                <td>₹22,000</td>
+                                <td style="color: var(--error);">+13.6%</td>
+                            </tr>
+                            <tr>
+                                <td>Fertilizers</td>
+                                <td>₹18,500</td>
+                                <td>₹20,000</td>
+                                <td style="color: var(--success);">-7.5%</td>
+                            </tr>
+                            <tr>
+                                <td>Pesticides</td>
+                                <td>₹12,300</td>
+                                <td>₹15,600</td>
+                                <td style="color: var(--success);">-21.2%</td>
+                            </tr>
+                            <tr>
+                                <td>Labor</td>
+                                <td>₹22,000</td>
+                                <td>₹22,000</td>
+                                <td>0%</td>
+                            </tr>
+                            <tr>
+                                <td>Equipment & Maintenance</td>
+                                <td>₹7,200</td>
+                                <td>₹5,800</td>
+                                <td style="color: var(--error);">+24.1%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Loan & Insurance</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <h4>Kisan Credit Card</h4>
+                            <p><strong>Limit:</strong> ₹5,00,000</p>
+                            <p><strong>Used:</strong> ₹1,20,000</p>
+                            <p><strong>Available:</strong> ₹3,80,000</p>
+                            <div class="progress-bar" style="margin-top: 1rem;">
+                                <div class="progress-fill" style="width: 24%;"></div>
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <h4>Crop Insurance</h4>
+                            <p><strong>Premium:</strong> ₹15,000/year</p>
+                            <p><strong>Coverage:</strong> ₹8,00,000</p>
+                            <p><strong>Status:</strong> <span class="badge badge-success">Active</span></p>
+                            <button class="btn-secondary" style="margin-top: 1rem;">Claim History</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Community Section -->
+            <section id="community" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Farmer Community</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=60" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <strong>Suresh Patil</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Nashik, Maharashtra</p>
+                                </div>
+                            </div>
+                            <p>"Drip irrigation increased my tomato yield by 40%! Sharing my setup details in the forum."</p>
+                            <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
+                                <i class="fas fa-thumbs-up"></i> 24 likes • 8 comments
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=60" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <strong>Dr. Amit Sharma</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Agricultural Expert</p>
+                                </div>
+                            </div>
+                            <p>"Weather update: Heavy rains expected next week. Farmers should harvest mature crops and protect seedlings."</p>
+                            <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
+                                <i class="fas fa-thumbs-up"></i> 156 likes • 45 comments
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=60" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <strong>Meera Joshi</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Organic Farmer</p>
+                                </div>
+                            </div>
+                            <p>"Successfully controlled aphids using neem oil and garlic spray. Recipe in comments!"</p>
+                            <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
+                                <i class="fas fa-thumbs-up"></i> 89 likes • 23 comments
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Ask the Community</h2>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-input" rows="3" placeholder="Ask your question or share your experience..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="btn-primary">Post Question</button>
+                        <button class="btn-secondary" onclick="document.getElementById('community-image').click()">
+                            <i class="fas fa-camera"></i>
+                            Add Photo
+                        </button>
+                        <input type="file" id="community-image" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Popular Topics</h2>
+                    </div>
+                    <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                        <span class="badge" style="background: var(--primary); color: white; cursor: pointer;">#DroughtResistant</span>
+                        <span class="badge" style="background: var(--secondary); color: white; cursor: pointer;">#OrganicFarming</span>
+                        <span class="badge" style="background: var(--accent); color: white; cursor: pointer;">#PestControl</span>
+                        <span class="badge" style="background: var(--success); color: white; cursor: pointer;">#HighYield</span>
+                        <span class="badge" style="background: var(--warning); color: white; cursor: pointer;">#MarketPrices</span>
+                        <span class="badge" style="background: var(--error); color: white; cursor: pointer;">#WeatherAlert</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Farm Analytics & Reports</h2>
+                        <button class="btn-primary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px; text-align: center;">
+                            <i class="fas fa-chart-bar fa-2x" style="color: var(--primary); margin-bottom: 0.5rem;"></i>
+                            <h4>Yield Analysis</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Compare yields across seasons</p>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px; text-align: center;">
+                            <i class="fas fa-coins fa-2x" style="color: var(--secondary); margin-bottom: 0.5rem;"></i>
+                            <h4>Financial Report</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Profit & loss analysis</p>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px; text-align: center;">
+                            <i class="fas fa-leaf fa-2x" style="color: var(--success); margin-bottom: 0.5rem;"></i>
+                            <h4>Crop Health</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Health trends & predictions</p>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 10px; text-align: center;">
+                            <i class="fas fa-tint fa-2x" style="color: var(--accent); margin-bottom: 0.5rem;"></i>
+                            <h4>Resource Usage</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Water, fertilizer efficiency</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Seasonal Performance Comparison</h2>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Season</th>
+                                <th>Crop</th>
+                                <th>Area (ha)</th>
+                                <th>Yield (tonnes)</th>
+                                <th>Revenue</th>
+                                <th>Profit Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rabi 2024-25</td>
+                                <td>Wheat</td>
+                                <td>6.5</td>
+                                <td>28.5</td>
+                                <td>₹5,70,000</td>
+                                <td style="color: var(--success);">68%</td>
+                            </tr>
+                            <tr>
+                                <td>Kharif 2024</td>
+                                <td>Sugarcane</td>
+                                <td>5.0</td>
+                                <td>320</td>
+                                <td>₹9,60,000</td>
+                                <td style="color: var(--success);">72%</td>
+                            </tr>
+                            <tr>
+                                <td>Summer 2024</td>
+                                <td>Cotton</td>
+                                <td>4.0</td>
+                                <td>16.8</td>
+                                <td>₹7,56,000</td>
+                                <td style="color: var(--success);">65%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Productivity Insights</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: #dcfce7; border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">+15%</div>
+                            <div>Yield Improvement</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">vs. Last Year</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #dbeafe; border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">-22%</div>
+                            <div>Water Usage</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Efficiency Gain</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #fef3c7; border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">-8%</div>
+                            <div>Input Costs</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Cost Reduction</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #f3e8ff; border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--analytics-theme);">+28%</div>
+                            <div>Net Profit</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Year over Year</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-fab" onclick="toggleChat()">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> AgriSense AI Assistant</span>
+                <button onclick="toggleChat()" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    Hello! I'm your AgriSense AI assistant. I can help you with:
+                    <br>• Crop disease diagnosis
+                    <br>• Weather-based recommendations  
+                    <br>• Market price predictions
+                    <br>• Irrigation scheduling
+                    <br>• And much more!
+                    <br><br>How can I help you today?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+                <button class="btn-primary" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                switchSection(sectionId);
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
+
+        function switchSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'fields': 'My Fields',
+                'ai-advisory': 'AI Advisory',
+                'yield-prediction': 'Yield Prediction',
+                'marketplace': 'Marketplace',
+                'soil-analysis': 'Soil Analysis',
+                'weather': 'Weather Forecast',
+                'pest-disease': 'Pest & Disease Management',
+                'irrigation': 'Smart Irrigation',
+                'finance': 'Farm Finance',
+                'community': 'Farmer Community',
+                'reports': 'Analytics & Reports'
+            };
+            
+            document.getElementById('page-title').textContent = titles[sectionId] || 'AgriSense Pro';
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Chat functionality
+        function toggleChat() {
+            document.getElementById('chatPanel').classList.toggle('open');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                addMessage('user', message);
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const responses = [
+                        "Based on your soil analysis, I recommend increasing nitrogen levels by 15% for your wheat crop.",
+                        "The weather forecast shows rain in 2 days. Consider harvesting mature crops and protecting seedlings.",
+                        "Current market prices for wheat are trending upward (+8%). It's a good time to sell!",
+                        "I've analyzed your field photos. No signs of disease detected. Your crops look healthy!",
+                        "For optimal irrigation, water your sugarcane field tomorrow morning at 6 AM based on soil moisture levels."
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage('ai', randomResponse);
+                }, 1000);
+            }
+        }
+
+        function addMessage(sender, text) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Marketplace functionality
+        function switchMarketTab(tab) {
+            document.getElementById('buy-tab').style.display = tab === 'buy' ? 'block' : 'none';
+            document.getElementById('sell-tab').style.display = tab === 'sell' ? 'block' : 'none';
+        }
+
+        // Utility functions for demo purposes
+        function showNotifications() {
+            alert('Notifications: \n• Weather alert: Heavy rain expected\n• Market update: Wheat prices up 8%\n• AI recommendation ready for North Field');
+        }
+
+        function analyzePlantDisease(input) {
+            if (input.files && input.files[0]) {
+                setTimeout(() => {
+                    alert('AI Analysis Complete:\n\nNo disease detected in the uploaded image.\nYour crop appears healthy!\n\nRecommendations:\n• Continue regular monitoring\n• Maintain current care routine');
+                }, 2000);
+            }
+        }
+
+        function analyzeSoil(input) {
+            if (input.files && input.files[0]) {
+                setTimeout(() => {
+                    alert('Soil Analysis Complete:\n\n• pH: 7.2 (Good)\n• Nitrogen: Moderate - Apply 25kg urea/ha\n• Phosphorus: Adequate\n• Potassium: High\n\nDetailed report generated and saved to your dashboard.');
+                }, 2000);
+            }
+        }
+
+        function getCropRecommendations() {
+            alert('AI Crop Recommendations for your region:\n\n1. Wheat (Rabi season) - Expected ROI: 185%\n2. Sugarcane - Expected ROI: 220% \n3. Cotton - Expected ROI: 165%\n4. Soybean - Expected ROI: 145%\n\nBased on: Soil type, climate, market trends');
+        }
+
+        function optimizeGrowth() {
+            alert('Growth Optimization Plan:\n\n• Plant wheat by November 20th for maximum yield\n• Apply first fertilizer dose after 25 days\n• Schedule irrigation every 10-12 days\n• Harvest in mid-March for best quality\n\nPotential yield increase: 12-15%');
+        }
+
+        function addToCart(product) {
+            alert(`${product} added to cart!\n\nView cart to proceed with purchase.`);
+        }
+
+        function listProduce() {
+            alert('Your produce has been listed on the marketplace!\n\nBuyers in your area will be notified.\nYou will receive offers within 24 hours.');
+        }
+
+        function showDetailedPrediction(crop) {
+            const predictions = {
+                wheat: 'Detailed Wheat Prediction:\n\n• Yield: 28.5 tonnes (4.4 tonnes/ha)\n• Quality Grade: A+\n• Optimal harvest: March 15-25\n• Factors: Weather (92%), Soil (88%), Care (95%)\n• Market price at harvest: ₹22-24/kg',
+                sugarcane: 'Detailed Sugarcane Prediction:\n\n• Yield: 320 tonnes (64 tonnes/ha)\n• Sugar content: 18.5%\n• Optimal harvest: December 2025\n• Factors: Weather (85%), Soil (92%), Care (91%)\n• Market price at harvest: ₹28-32/kg'
+            };
+            alert(predictions[crop] || 'Prediction details not available');
+        }
+
+        function manualIrrigation(field) {
+            alert(`Manual irrigation started for ${field} field.\n\nEstimated duration: 45 minutes\nWater usage: ~800 liters\n\nSystem will return to auto mode after completion.`);
+        }
+
+        function startIrrigation(field) {
+            alert(`Irrigation started for ${field} field.\n\nDuration: 60 minutes\nWater usage: ~1200 liters\n\nSoil moisture will be optimal after completion.`);
+        }
+
+        function generateReport() {
+            alert('Comprehensive Farm Report Generated!\n\nIncludes:\n• Yield analysis across all fields\n• Financial performance metrics\n• Resource utilization efficiency\n• Recommendations for next season\n\nReport saved to your dashboard.');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show dashboard by default
+            switchSection('dashboard');
+            
+            // Auto-scroll to top when switching sections
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.querySelector('.main-content').scrollTop = 0;
+                });
+            });
+        });
+
+        // Handle window resize for mobile responsiveness
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
